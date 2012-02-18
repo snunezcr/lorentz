@@ -2,7 +2,7 @@
  * Deterministic Lorenz equations code
  * Research on sensitivity to initial conditions
  *
- * Converts an experiment file from binary to ASCII formats.
+ * Converts a statistics file from binary to ASCII formats.
  *
  * Santiago Nunez Corrales
  * Eric Jakobsson
@@ -13,8 +13,8 @@
 #include <expfile.h>
 
 int main(int argc, char *argv[]) {
-	struct exp_header header;
-	double vect[DIM];
+	struct stat_header header;
+	struct stat_vector vect;
 	int i;
 	int error;
 
@@ -40,15 +40,24 @@ int main(int argc, char *argv[]) {
 
 	error = fread(&header, 1, sizeof(header), in);
 
-	if (strncmp(header.id, "LRNZE", FID) != 0) {
+	if (strncmp(header.id, "LRNZS", FID) != 0) {
 		fprintf(stderr, "Not an experiment file.\n");
 		fclose(out);
 		return -1;
 	}
 
 	for (i = 0; i < header.count; i++) {
-		error = fread(vect, DIM, sizeof(double), in);
-		fprintf(out, "%d\t%lf\t%lf\t%lf\n", i, vect[X], vect[Y], vect[Z]);
+		error = fread(&vect, 1, sizeof(vect), in);
+		fprintf(out, "%d\t", i);
+		fprintf(out, "%lf\t", vect.x_avg);
+		fprintf(out, "%lf\t", vect.x_var);
+		fprintf(out, "%lf\t", vect.y_avg);
+		fprintf(out, "%lf\t", vect.y_var);
+		fprintf(out, "%lf\t", vect.z_avg);
+		fprintf(out, "%lf\t", vect.z_var);
+		fprintf(out, "%lf\t", vect.p_avg);
+		fprintf(out, "%lf\t", vect.p_var);
+                fprintf(out, "\n");
 	}
 
 	fclose(out);

@@ -12,11 +12,15 @@
  */
 
 #define DIM 3
-#define FID 6
+#define FID 5
 
 #define X 0
 #define Y 1
 #define Z 2
+
+#define N 10000
+
+#define PATH 256
 
 struct exp_header {
 	char id[FID];
@@ -29,4 +33,21 @@ struct exp_header {
 	double psi;
 };
 
+struct stat_header {
+	char id[FID];
+	int count;
+	double x;
+	double y;
+	double z;
+};
 
+struct stat_vector {
+	double x_avg;
+	double x_var;
+	double y_avg;
+	double y_var;
+	double z_avg;
+	double z_var;
+	double p_avg;
+	double p_var;
+};

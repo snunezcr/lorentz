@@ -17,8 +17,6 @@
 #include <math.h>
 #include <expfile.h>
 
-#define N 10000
-
 #define R 0
 #define PHI 1
 #define PSI 2
