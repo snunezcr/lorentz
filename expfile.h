@@ -12,13 +12,14 @@
  */
 
 #define DIM 3
+#define FID 6
 
 #define X 0
 #define Y 1
 #define Z 2
 
 struct exp_header {
-	char id[4];
+	char id[FID];
 	int count;
 	double x;
 	double y;

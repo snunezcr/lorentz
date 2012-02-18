@@ -54,7 +54,7 @@ int main (int argc, char *argv[]) {
 	sphr[PSI] = atof(argv[6]);
 
 	header.count = N;
-	memcpy(header.id, "LRNZ", 4*sizeof(char));
+	memcpy(header.id, "LRNZE", FID*sizeof(char));
 	header.x = curr[X];
 	header.y = curr[Y];
 	header.z = curr[Z];

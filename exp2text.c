@@ -42,6 +42,12 @@ int main(int argc, char *argv[]) {
 
 	error = fread(&header, 1, sizeof(header), in);
 
+	if (strncmp(header.id, "LRNZE", FID - 1) != 0) {
+		fprintf(stderr, "Not an experiment file.\n");
+		fclose(out);
+		return -1;
+	}
+
 	for (i = 0; i < header.count; i++) {
 		error = fread(vect, DIM, sizeof(double), in);
 		fprintf(out, "%d\t%lf\t%lf\t%lf\n", i, vect[X], vect[Y], vect[Z]);
