@@ -16,12 +16,16 @@
 #include <string.h>
 #include <math.h>
 #include <expfile.h>
+#include <ranlib.h>
 
 #define R 0
 #define PHI 1
 #define PSI 2
 
 #define PI 3.141592654
+
+#define SEED1	3
+#define SEED2	7
 
 int main (int argc, char *argv[]) {
 	int i;
@@ -30,7 +34,7 @@ int main (int argc, char *argv[]) {
 	double tran[DIM];
 	double sphr[DIM];
 	double h, a, b, c;
-	double sigma, dw;
+	double sigma, dw, rand;
 	FILE *output;
 	struct exp_header header;
 	
@@ -39,7 +43,7 @@ int main (int argc, char *argv[]) {
 	b = 28.0;
 	c = 8.0/3.0;
 
-	if (argc != 8) {
+	if (argc != 9) {
 		fprintf(stderr, "Number of parameters incorrect: %d.\n", argc);
 		return -1;
 	}
@@ -80,10 +84,13 @@ int main (int argc, char *argv[]) {
 		return -1;
 	}
 
+	setall(SEED1, SEED2);
+
 	fwrite(&header, 1, sizeof(header), output);
 	
 	for (i = 0; i < N; i++) {
-		dw = sqrt(h)*gennor(0,1);
+		rand = gennor(0, 1);
+		dw = sqrt(h)*rand;
 
 		next[X] = curr[X] + h*a*(curr[Y] - curr[X]) + sigma*curr[X]*dw;
 		next[Y] = curr[Y] + h*(curr[X]*(b - curr[Z]) - curr[Y]) + sigma*curr[Y]*dw;
