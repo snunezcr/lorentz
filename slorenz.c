@@ -18,12 +18,6 @@
 #include <expfile.h>
 #include <ranlib.h>
 
-#define R 0
-#define PHI 1
-#define PSI 2
-
-#define PI 3.141592654
-
 #define SEED1	3
 #define SEED2	7
 
@@ -32,7 +26,6 @@ int main (int argc, char *argv[]) {
 	double curr[DIM];
 	double next[DIM];
 	double tran[DIM];
-	double sphr[DIM];
 	double h, a, b, c;
 	double sigma, dw, rand;
 	FILE *output;
@@ -52,9 +45,9 @@ int main (int argc, char *argv[]) {
 	curr[Y] = atof(argv[2]);
 	curr[Z] = atof(argv[3]);
 
-	sphr[R] = atof(argv[4]);
-	sphr[PHI] = atof(argv[5]);
-	sphr[PSI] = atof(argv[6]);
+	tran[X] = atof(argv[4]);
+	tran[Y] = atof(argv[5]);
+	tran[Z] = atof(argv[6]);
 
 	sigma = atof(argv[7]);
 
@@ -63,16 +56,9 @@ int main (int argc, char *argv[]) {
 	header.x = curr[X];
 	header.y = curr[Y];
 	header.z = curr[Z];
-	header.r = sphr[R];
-	header.phi = sphr[PHI];
-	header.psi = sphr[PSI];
-
-	sphr[PHI] *= PI/180.0;
-	sphr[PSI] *= PI/180.0;
-
-	tran[X] = sphr[R]*cos(sphr[PHI])*sin(sphr[PSI]);
-	tran[Y] = sphr[R]*sin(sphr[PHI])*cos(sphr[PSI]);
-	tran[Z] = sphr[R]*cos(sphr[PSI]);
+	header.xp = tran[X];
+	header.yp = tran[Y];
+	header.zp = tran[Z];
 
 	curr[X] += tran[X];
 	curr[Y] += tran[Y];

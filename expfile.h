@@ -4,11 +4,11 @@
  *
  * The code receives a set of coordinates of origin and
  * a vector of spherical coordinates in order to cover a
- * sphere of points around the origin.
+ * box of points around the origin.
  *
  * Santiago Nunez Corrales
  * Eric Jakobsson
- * 2012
+ * 2015
  */
 
 #define DIM 3
@@ -28,9 +28,9 @@ struct exp_header {
 	double x;
 	double y;
 	double z;
-	double r;
-	double phi;
-	double psi;
+	double xp;
+	double yp;
+	double zp;
 };
 
 struct stat_header {
@@ -51,3 +51,4 @@ struct stat_vector {
 	double p_avg;
 	double p_var;
 };
+

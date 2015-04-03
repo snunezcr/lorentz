@@ -2,12 +2,15 @@ CC=gcc
 CFLAGS=-O2 -I.
 LDFLAGS=-lm
 
-all: lorenz slorenz exp2text statistics stat2text
+all: lorenz slorenz  tlorenz exp2text statistics stat2text
 
 lorenz: lorenz.c
 	$(CC) $(CFLAGS) $(@).c -o $(@) $(LDFLAGS)
 
 slorenz: slorenz.c
+	$(CC) $(CFLAGS) $(@).c ranlib.c linpack.c com.c -o $(@) $(LDFLAGS)
+
+tlorenz: tlorenz.c
 	$(CC) $(CFLAGS) $(@).c ranlib.c linpack.c com.c -o $(@) $(LDFLAGS)
 
 exp2text: exp2text.c
