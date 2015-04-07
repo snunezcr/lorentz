@@ -18,8 +18,9 @@
 #include <expfile.h>
 #include <ranlib.h>
 
-#define SEED1	3
-#define SEED2	7
+#define SEED1	9
+#define SEED2	11
+#define RAND_ITERS 25
 
 double distance(double xi, double xj, double yi, double yj, double zi, double zj) {
     double dist = 0;
@@ -132,75 +133,77 @@ int main (int argc, char *argv[]) {
     
     fprintf(stdout, "Parameter sweep...\n");
     
-    while (curr[X] <= fnsh[X]) {
-        while (curr[Y] <= fnsh[Y]) {
-            while (curr[Z] <= fnsh[Z]) {
-                // Calculate distance from origin to current scenario
-                orig_dist = distance(base_x, curr[X], base_y, curr[Y],
-                                     base_z, curr[Z]);
-                while (sigma <= 1.0) {
-                    
-                    // Difference starts at 0
-                    sum_diff = 0;
-                    fprintf(stdout, "at X:%f Y:%f Z:%f d:%f s:%f.\n",
-                            curr[X], curr[Y], curr[Z], orig_dist, sigma);
-                    // Calculation and comparison against Lorenz
-                    tran[X] = curr[X];
-                    tran[Y] = curr[Y];
-                    tran[Z] = curr[Z];
-                    
-                    
-                    for (i = 0; i < N; i++) {
-                        last_sum_diff = sum_diff;
+    for (j = 0; j < 25; j++) {
+        while (curr[X] <= fnsh[X]) {
+            while (curr[Y] <= fnsh[Y]) {
+                while (curr[Z] <= fnsh[Z]) {
+                    // Calculate distance from origin to current scenario
+                    orig_dist = distance(base_x, curr[X], base_y, curr[Y],
+                                         base_z, curr[Z]);
+                    while (sigma <= 1.0) {
                         
-                        sum_diff += distance(lorenz[i][X], tran[X],
-                                               lorenz[i][Y], tran[Y],
-                                               lorenz[i][Z], tran[Z]);
+                        // Difference starts at 0
+                        sum_diff = 0;
+                        fprintf(stdout, "at X:%f Y:%f Z:%f d:%f s:%f.\n",
+                                curr[X], curr[Y], curr[Z], orig_dist, sigma);
+                        // Calculation and comparison against Lorenz
+                        tran[X] = curr[X];
+                        tran[Y] = curr[Y];
+                        tran[Z] = curr[Z];
                         
-                        // If the result is not finite, restort to last result
-                        // and break
-                        if(! isfinite(sum_diff)) {
-                            sum_diff = last_sum_diff;
-                            i = i - 1;
-                            break;
+                        
+                        for (i = 0; i < N; i++) {
+                            last_sum_diff = sum_diff;
+                            
+                            sum_diff += distance(lorenz[i][X], tran[X],
+                                                   lorenz[i][Y], tran[Y],
+                                                   lorenz[i][Z], tran[Z]);
+                            
+                            // If the result is not finite, restort to last result
+                            // and break
+                            if(! isfinite(sum_diff)) {
+                                sum_diff = last_sum_diff;
+                                i = i - 1;
+                                break;
+                            }
+                            
+                            rand = gennor(0, 1);
+                            dw = sqrt(h)*rand;
+                            
+                            next[X] = tran[X] + h*a*(tran[Y] - tran[X]) + sigma*tran[X]*dw;
+                            next[Y] = tran[Y] + h*(tran[X]*(b - tran[Z]) - tran[Y]) + sigma*tran[Y]*dw;
+                            next[Z] = tran[Z] + h*(tran[X]*tran[Y] - c*tran[Z]) + sigma*tran[Z]*dw;
+                            
+                            tran[X] = next[X];
+                            tran[Y] = next[Y];
+                            tran[Z] = next[Z];
+                            
                         }
-                        
-                        rand = gennor(0, 1);
-                        dw = sqrt(h)*rand;
-                        
-                        next[X] = tran[X] + h*a*(tran[Y] - tran[X]) + sigma*tran[X]*dw;
-                        next[Y] = tran[Y] + h*(tran[X]*(b - tran[Z]) - tran[Y]) + sigma*tran[Y]*dw;
-                        next[Z] = tran[Z] + h*(tran[X]*tran[Y] - c*tran[Z]) + sigma*tran[Z]*dw;
-                        
-                        tran[X] = next[X];
-                        tran[Y] = next[Y];
-                        tran[Z] = next[Z];
-                        
-                    }
 
-                    // Write results
-                    fprintf(output, "%f %f %f %f %f %f %f %f %.7e %i %.7e %.7e %.7e\n",
-                            base_x, base_y, base_z,
-                            curr[X], curr[Y], curr[Z],
-                            sigma, orig_dist, sum_diff,
-                            i, tran[X], tran[Y], tran[Z]);
-                    // Add diff_s
-                    sigma += diff_s;
+                        // Write results
+                        fprintf(output, "%f %f %f %f %f %f %f %f %.7e %i %.7e %.7e %.7e\n",
+                                base_x, base_y, base_z,
+                                curr[X], curr[Y], curr[Z],
+                                sigma, orig_dist, sum_diff,
+                                i, tran[X], tran[Y], tran[Z]);
+                        // Add diff_s
+                        sigma += diff_s;
+                    }
+                    // Cycle out: reset sigma
+                    sigma = 0;
+                    // Increase Z
+                    curr[Z] += diff_d;
                 }
-                // Cycle out: reset sigma
-                sigma = 0;
-                // Increase Z
-                curr[Z] += diff_d;
+                // Cycle out: reset Z
+                curr[Z] = strt[Z];
+                // Increase Y
+                curr[Y] += diff_d;
             }
-            // Cycle out: reset Z
-            curr[Z] = strt[Z];
-            // Increase Y
-            curr[Y] += diff_d;
+            // Cycle out: reset Y
+            curr[Y] = strt[Y];
+            // Increase X
+            curr[X] += diff_d;
         }
-        // Cycle out: reset Y
-        curr[Y] = strt[Y];
-        // Increase X
-        curr[X] += diff_d;
     }
     
 	fclose(output);
