@@ -20,7 +20,7 @@
 
 #define SEED1	9
 #define SEED2	11
-#define RAND_ITERS 25
+#define RAND_ITERS 5
 
 double distance(double xi, double xj, double yi, double yj, double zi, double zj) {
     double dist = 0;
@@ -130,6 +130,7 @@ int main (int argc, char *argv[]) {
     fprintf(stdout, "Parameter sweep...\n");
     
     for (j = 0; j < 25; j++) {
+        fprintf(stdout, "Iteration %i \n", j);
         // Reset for each run
         curr[X] = strt[X];
         curr[Y] = strt[Y];
