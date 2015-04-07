@@ -45,6 +45,7 @@ int main (int argc, char *argv[]) {
 	double tran[DIM];
     double points_d, points_s;
     double diff_d, diff_s;
+    double resolution;
 	double h, a, b, c;
 	double sigma, dw, rand;
     // Distance from origin
@@ -61,8 +62,9 @@ int main (int argc, char *argv[]) {
 	b = 28.0;
 	c = 8.0/3.0;
 
-	if (argc != 7) {
+	if (argc != 8) {
 		fprintf(stderr, "Number of parameters incorrect: %d.\n", argc);
+        fprintf(stderr, "./%s x y z dr ds r file\n", argv[0]);
 		return -1;
 	}
     
@@ -72,8 +74,9 @@ int main (int argc, char *argv[]) {
 	base_z = atof(argv[3]);
     points_d = atof(argv[4]);
 	points_s = atof(argv[5]);
-    diff_d = 1/points_d;
-    diff_s = 1/points_s;
+    resolution = atof(argv[6]);
+    diff_d = resolution/points_d;
+    diff_s = 1.0/points_s;
     
     // Initialize exploration limits
     strt[X] = base_x - 1;
@@ -83,7 +86,7 @@ int main (int argc, char *argv[]) {
     fnsh[Y] = base_y + 1;
     fnsh[Z] = base_z + 1;
     
-	if ( (output = fopen(argv[6], "w")) == NULL) {
+	if ( (output = fopen(argv[7], "w")) == NULL) {
 		fprintf(stderr, "Results file creation failed.\n");
 		fclose(output);
 		return -1;
