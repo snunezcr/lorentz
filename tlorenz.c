@@ -129,7 +129,7 @@ int main (int argc, char *argv[]) {
     
     fprintf(stdout, "Parameter sweep...\n");
     
-    for (j = 0; j < 25; j++) {
+    for (j = 0; j < RAND_ITERS; j++) {
         fprintf(stdout, "Iteration %i \n", j);
         // Reset for each run
         curr[X] = strt[X];
