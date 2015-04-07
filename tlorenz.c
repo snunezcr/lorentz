@@ -126,26 +126,30 @@ int main (int argc, char *argv[]) {
     fprintf(output, "X0 Y0 Z0 XK YK ZK sigma OD S NL XL YL ZL\n");
     
     // Setp 2: calculate all possible scenarios and their accumulated difference
-    curr[X] = strt[X];
-    curr[Y] = strt[Y];
-    curr[Z] = strt[Z];
-    sigma = 0;
     
     fprintf(stdout, "Parameter sweep...\n");
     
     for (j = 0; j < 25; j++) {
+        // Reset for each run
+        curr[X] = strt[X];
+        curr[Y] = strt[Y];
+        curr[Z] = strt[Z];
+        sigma = 0;
+        
         while (curr[X] <= fnsh[X]) {
             while (curr[Y] <= fnsh[Y]) {
                 while (curr[Z] <= fnsh[Z]) {
                     // Calculate distance from origin to current scenario
                     orig_dist = distance(base_x, curr[X], base_y, curr[Y],
                                          base_z, curr[Z]);
+                    
+                    //fprintf(stdout, "at X:%f Y:%f Z:%f d:%f.\n",
+                    //        curr[X], curr[Y], curr[Z], orig_dist);
+                    
                     while (sigma <= 1.0) {
                         
                         // Difference starts at 0
                         sum_diff = 0;
-                        fprintf(stdout, "at X:%f Y:%f Z:%f d:%f s:%f.\n",
-                                curr[X], curr[Y], curr[Z], orig_dist, sigma);
                         // Calculation and comparison against Lorenz
                         tran[X] = curr[X];
                         tran[Y] = curr[Y];
