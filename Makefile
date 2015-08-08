@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Ofast -I.
+CFLAGS=-Ofast -fopenmp -I.
 LDFLAGS=-lm
 
 all: lorenz slorenz  tlorenz exp2text statistics stat2text

@@ -135,7 +135,6 @@ int main (int argc, char *argv[]) {
         curr[X] = strt[X];
         curr[Y] = strt[Y];
         curr[Z] = strt[Z];
-        sigma = 0;
         
         while (curr[X] <= fnsh[X]) {
             while (curr[Y] <= fnsh[Y]) {
@@ -144,10 +143,8 @@ int main (int argc, char *argv[]) {
                     orig_dist = distance(base_x, curr[X], base_y, curr[Y],
                                          base_z, curr[Z]);
                     
-                    //fprintf(stdout, "at X:%f Y:%f Z:%f d:%f.\n",
-                    //        curr[X], curr[Y], curr[Z], orig_dist);
-                    
-                    while (sigma <= 1.0) {
+		    #pragma omp parallel for
+                    for (sigma = 0; sigma <= 1.0; sigma += diff_s) {
                         
                         // Difference starts at 0
                         sum_diff = 0;
@@ -164,8 +161,6 @@ int main (int argc, char *argv[]) {
                                                    lorenz[i][Y], tran[Y],
                                                    lorenz[i][Z], tran[Z]);
                             
-                            // If the result is not finite, restort to last result
-                            // and break
                             if(! isfinite(sum_diff)) {
                                 sum_diff = last_sum_diff;
                                 i = i - 1;
@@ -175,10 +170,17 @@ int main (int argc, char *argv[]) {
                             rand = gennor(0, 1);
                             dw = sqrt(h)*rand;
                             
-                            next[X] = tran[X] + h*a*(tran[Y] - tran[X]) + sigma*tran[X]*dw;
-                            next[Y] = tran[Y] + h*(tran[X]*(b - tran[Z]) - tran[Y]) + sigma*tran[Y]*dw;
-                            next[Z] = tran[Z] + h*(tran[X]*tran[Y] - c*tran[Z]) + sigma*tran[Z]*dw;
-                            
+                            next[X] = tran[X] 
+					+ h*a*(tran[Y] - tran[X]) 
+					+ sigma*tran[X]*dw;
+                            next[Y] = tran[Y] 
+					+ h*(tran[X]*(b - tran[Z]) - tran[Y]) 
+					+ sigma*tran[Y]*dw;
+                            next[Z] = tran[Z] 
+					+ h*(tran[X]*tran[Y] 
+					- c*tran[Z]) 
+					+ sigma*tran[Z]*dw;
+
                             tran[X] = next[X];
                             tran[Y] = next[Y];
                             tran[Z] = next[Z];
@@ -186,27 +188,19 @@ int main (int argc, char *argv[]) {
                         }
 
                         // Write results
+			#pragma omp atomic
                         fprintf(output, "%f %f %f %f %f %f %f %f %.7e %i %.7e %.7e %.7e\n",
                                 base_x, base_y, base_z,
                                 curr[X], curr[Y], curr[Z],
                                 sigma, orig_dist, sum_diff,
                                 i, tran[X], tran[Y], tran[Z]);
-                        // Add diff_s
-                        sigma += diff_s;
                     }
-                    // Cycle out: reset sigma
-                    sigma = 0;
-                    // Increase Z
                     curr[Z] += diff_d;
                 }
-                // Cycle out: reset Z
                 curr[Z] = strt[Z];
-                // Increase Y
                 curr[Y] += diff_d;
             }
-            // Cycle out: reset Y
             curr[Y] = strt[Y];
-            // Increase X
             curr[X] += diff_d;
         }
     }
