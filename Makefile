@@ -1,14 +1,17 @@
 CC=gcc
-CFLAGS=-Ofast -fopenmp -I.
+CFLAGS=-Ofast -I.
 LDFLAGS=-lm
 
-all: lorenz slorenz  tlorenz exp2text statistics stat2text
+all: lorenz slorenz plorenz tlorenz exp2text statistics stat2text
 
 lorenz: lorenz.c
 	$(CC) $(CFLAGS) $(@).c -o $(@) $(LDFLAGS)
 
 slorenz: slorenz.c
 	$(CC) $(CFLAGS) $(@).c ranlib.c linpack.c com.c -o $(@) $(LDFLAGS)
+
+plorenz: plorenz.c
+		$(CC) $(CFLAGS) $(@).c ranlib.c linpack.c com.c -o $(@) $(LDFLAGS)
 
 tlorenz: tlorenz.c
 	$(CC) $(CFLAGS) $(@).c ranlib.c linpack.c com.c -o $(@) $(LDFLAGS)
@@ -25,6 +28,7 @@ stat2text: stat2text.c
 clean:
 	rm -f lorenz
 	rm -f slorenz
+	rm -f plorenz
 	rm -f exp2text
 	rm -f statistics
 	rm -f stat2text
